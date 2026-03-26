@@ -531,8 +531,8 @@
     /* ═══════════════════════════════════════
        LOCAL STORAGE
     ═══════════════════════════════════════ */
-    const STORAGE_KEY = 'polaroid_gallery_v2';
-    const MAX_SAVED = 24;
+    const STORAGE_KEY = 'polaroid_gallery_v3';
+    const MAX_SAVED = 12;
 
     function loadSavedPhotos() {
       try {
@@ -829,13 +829,16 @@
         // Save to gallery
         const img = new Image();
         img.onload = () => {
-          const size = 320;
+          const maxSize = 1200;
+          const scale = Math.min(maxSize / img.naturalWidth, maxSize / img.naturalHeight, 1);
+          const W = Math.round(img.naturalWidth * scale);
+          const H = Math.round(img.naturalHeight * scale);
           const canvas = document.createElement('canvas');
-          canvas.width = size; canvas.height = size;
+          canvas.width = W; canvas.height = H;
           const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, size, size);
-          applyPixelFilters(ctx, size, size, filter.px);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          ctx.drawImage(img, 0, 0, W, H);
+          applyPixelFilters(ctx, W, H, filter.px);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.93);
           onPhotoSaved(dataUrl, filter.id, filter.name);
         };
         img.src = image;
